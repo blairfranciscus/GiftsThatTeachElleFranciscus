@@ -69,10 +69,15 @@
     }
     .nav-wrap { display: flex; min-height: 88px; align-items: center; justify-content: space-between; gap: 28px; }
     .brand { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; }
-    .brand-mark { position: relative; width: 28px; height: 35px; }
-    .brand-mark::before, .brand-mark::after { content: ""; position: absolute; border: 1px solid currentColor; border-radius: 100% 0 100% 0; }
-    .brand-mark::before { inset: 2px 5px 11px 0; transform: rotate(27deg); }
-    .brand-mark::after { inset: 11px 0 2px 5px; transform: rotate(-27deg); }
+    .brand-mark { width: 34px; height: 39px; flex: 0 0 34px; overflow: visible; }
+    .brand-mark path {
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .brand-mark .rune-inner { stroke-width: 1.35; opacity: .72; }
     .brand-text { font-family: var(--serif); font-size: 1.45rem; }
     .nav-links { display: flex; align-items: center; gap: 30px; }
     .nav-links a { color: inherit; font-size: .87rem; text-decoration: none; }
@@ -117,6 +122,52 @@
     }
     .hero-content { position: relative; z-index: 2; max-width: 850px; margin-inline: auto; padding: 160px 0 110px; }
     .hero .eyebrow { color: #e5caa7; }
+    .hero-title {
+      opacity: 0;
+      transform: translateY(42px);
+      animation: legacy-reveal 1.15s cubic-bezier(.2,.75,.25,1) .2s forwards;
+    }
+    .hero-title::after {
+      content: "";
+      display: block;
+      width: 0;
+      height: 1px;
+      margin: 28px auto 0;
+      background: linear-gradient(90deg, transparent, #e5caa7, transparent);
+      animation: legacy-line 1s ease 1.05s forwards;
+    }
+    .hero-kicker {
+      margin: 22px 0 26px;
+      opacity: 0;
+      transform: translateY(12px);
+      animation: legacy-kicker .75s ease 1.35s forwards;
+    }
+    .hero-intro-reveal {
+      opacity: 0;
+      transform: translateY(16px);
+      animation: hero-content-reveal .8s ease 1.75s forwards;
+    }
+    .hero-actions-reveal {
+      opacity: 0;
+      transform: translateY(12px);
+      animation: hero-content-reveal .8s ease 2.05s forwards;
+    }
+    @keyframes legacy-reveal {
+      from { opacity: 0; transform: translateY(42px); filter: blur(7px); }
+      to { opacity: 1; transform: translateY(0); filter: blur(0); }
+    }
+    @keyframes legacy-line {
+      from { width: 0; opacity: 0; }
+      to { width: min(270px, 62vw); opacity: 1; }
+    }
+    @keyframes legacy-kicker {
+      from { opacity: 0; transform: translateY(12px); letter-spacing: .24em; }
+      to { opacity: 1; transform: translateY(0); letter-spacing: .17em; }
+    }
+    @keyframes hero-content-reveal {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
     h1 { margin-bottom: 24px; font-size: clamp(4rem, 8.3vw, 7.6rem); letter-spacing: -.055em; }
     .hero-intro { max-width: 680px; margin: 0 auto 35px; color: rgba(255,255,255,.83); font-size: clamp(1.1rem, 2vw, 1.4rem); }
     .hero-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 13px; }
@@ -268,6 +319,14 @@
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
       *, *::before, *::after { transition-duration: .01ms !important; }
+      .hero-title, .hero-kicker, .hero-title::after,
+      .hero-intro-reveal, .hero-actions-reveal {
+        opacity: 1;
+        transform: none;
+        filter: none;
+        animation: none;
+      }
+      .hero-title::after { width: min(270px, 62vw); }
     }
   </style>
 </head>
@@ -277,7 +336,10 @@
   <header class="site-header">
     <div class="container nav-wrap">
       <a class="brand" href="#top" aria-label="Gifts That Teach home">
-        <span class="brand-mark" aria-hidden="true"></span>
+        <svg class="brand-mark" viewBox="0 0 34 40" aria-hidden="true">
+          <path d="M7 15V7.5h20V15h-5.5v18h-9V15H7Z"></path>
+          <path class="rune-inner" d="M10 14v-3.5h5v6M24 14v-3.5h-5v6M17 10.5V29"></path>
+        </svg>
         <span class="brand-text">Gifts That Teach</span>
       </a>
       <button class="menu-button" type="button" aria-expanded="false" aria-controls="primary-nav">Menu</button>
@@ -296,10 +358,10 @@
     <section class="hero" id="top">
       <div class="container">
         <div class="hero-content">
-          <p class="eyebrow">Whole-body donation • Colorado</p>
-          <h1>Every Life<br>Leaves a Legacy.</h1>
-          <p class="hero-intro">Some stories continue—in classrooms, in research, and in the discoveries that improve lives for generations to come.</p>
-          <div class="hero-actions">
+          <h1 class="hero-title">Every Life<br>Leaves a Legacy.</h1>
+          <p class="eyebrow hero-kicker">Whole body donation — Colorado</p>
+          <p class="hero-intro hero-intro-reveal">Some stories continue—in classrooms, in research, and in the discoveries that improve lives for generations to come.</p>
+          <div class="hero-actions hero-actions-reveal">
             <a class="button button-primary" href="#process">Learn how it works</a>
             <a class="button button-ghost" href="#resources">Find a donation program</a>
           </div>
@@ -313,20 +375,20 @@
         <div class="story-heading">
           <p class="eyebrow">A story that carries forward</p>
           <h2>We all leave something behind.</h2>
-          <p class="lead">For some, it is the memories held by people they love. For others, it is also the opportunity to shape the future of medicine.</p>
+          <p class="lead">We leave memories with the people we love. Through whole-body donation, we can also leave future doctors and researchers something to learn from.</p>
         </div>
         <div class="story-lines">
           <article class="story-line">
             <span>To teach</span>
-            <p>A donor can become an irreplaceable teacher, helping students understand the complexity and dignity of the human body.</p>
+            <p>Donors give students the chance to learn from the human body in a way no textbook can.</p>
           </article>
           <article class="story-line">
             <span>To discover</span>
-            <p>Donation may support research that deepens medical knowledge and informs new approaches to disease and care.</p>
+            <p>Donations help researchers better understand disease and explore new ways to improve care.</p>
           </article>
           <article class="story-line">
             <span>To serve</span>
-            <p>Clinicians can practice techniques and refine procedures before bringing those skills to living patients.</p>
+            <p>Doctors can practice and improve procedures before using them to care for patients.</p>
           </article>
         </div>
       </div>
@@ -481,9 +543,9 @@
         <div class="about-copy">
           <p class="eyebrow">Why Gifts That Teach began</p>
           <h2>Curiosity became a calling.</h2>
-          <p>Gifts That Teach was founded by Elle Franciscus after a high-school visit to a cadaver lab revealed the profound role donors play in medical learning. That experience strengthened her goal of becoming a physician and inspired her to help others understand whole-body donation.</p>
+          <p>Gifts That Teach was founded by Elle Franciscus after a visit to a cadaver lab revealed the profound role donors play in medical learning. That experience strengthened her goal of becoming a physician and inspired her to help others understand whole-body donation.</p>
           <p>I am a Senior at Vanderbilt University in Nashville studying biomedical engineering on the pre-med track and the Cadet Battalion Commander in the Army ROTC program. I am a student leader who is passionate about serving others in her community.</p>
-          <p>This project exists to make a complex and deeply personal decision feel more understandable—through respectful language, reliable starting points, and gratitude for the people who choose to teach beyond their lifetime.</p>
+          <p>Gifts That Teach exists to make a complex and deeply personal decision feel more understandable—through respectful language, reliable starting points, and gratitude for the people who choose to teach beyond their lifetime.</p>
         </div>
       </div>
     </section>
@@ -542,7 +604,10 @@
       <div class="footer-top">
         <div class="footer-main">
           <a class="brand" href="#top">
-            <span class="brand-mark" aria-hidden="true"></span>
+            <svg class="brand-mark" viewBox="0 0 34 40" aria-hidden="true">
+              <path d="M7 15V7.5h20V15h-5.5v18h-9V15H7Z"></path>
+              <path class="rune-inner" d="M10 14v-3.5h5v6M24 14v-3.5h-5v6M17 10.5V29"></path>
+            </svg>
             <span class="brand-text">Gifts That Teach</span>
           </a>
           <p class="footer-note">An independent educational resource created to encourage informed conversations about whole-body donation. We are not a donation program, healthcare provider, funeral provider, or legal adviser.</p>
